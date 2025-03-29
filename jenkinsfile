@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    environment {
+        JAVA_HOME = tool 'JDK17' // Configure JDK in Jenkins Global Tools
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/your-username/java-jenkins-pipeline.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'javac -d out src/*.java'  // Compile Java files
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'java -cp out org.junit.runner.JUnitCore TestClass' // Run JUnit tests
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application...'
+                // Add your deployment steps here (e.g., copy files, deploy to server)
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '🎉 Build & Deployment Successful!'
+        }
+        failure {
+            echo '❌ Build Failed!'
+        }
+    }
+}
